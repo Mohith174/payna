@@ -7,7 +7,9 @@ const EnvSchema = z.object({
   NEO4J_USER: z.string().min(1, "NEO4J_USER is required"),
   NEO4J_PASSWORD: z.string().min(1, "NEO4J_PASSWORD is required"),
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
-  ANTHROPIC_API_KEY: z.string().optional().default(""),
+  LLM_BASE_URL: z.string().optional().default("https://integrate.api.nvidia.com/v1"),
+  LLM_API_KEY: z.string().optional().default(""),
+  LLM_MODEL: z.string().optional().default("nvidia/nemotron-3-super-120b-a12b"),
   MOCK_EXTRACTION: z
     .string()
     .optional()
