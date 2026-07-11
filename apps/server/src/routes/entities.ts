@@ -5,6 +5,7 @@ import type { Entity, EntityKind } from "@payna/shared";
 import { getDriver } from "../db/neo4j.js";
 import { writeAuditLog } from "../db/audit.js";
 import { getObligationsForEntity } from "../traversal/engine.js";
+import { getEntityGraph } from "../traversal/graph.js";
 import { notFound } from "../middleware/error.js";
 
 export const entitiesRouter = Router();
@@ -100,5 +101,15 @@ entitiesRouter.get("/:id/requirements", async (req, res, next) => {
     next(err);
   } finally {
     await session.close();
+  }
+});
+
+entitiesRouter.get("/:id/graph", async (req, res, next) => {
+  try {
+    const graph = await getEntityGraph(req.params.id);
+    if (graph === null) throw notFound("Entity");
+    res.json(graph);
+  } catch (err) {
+    next(err);
   }
 });
