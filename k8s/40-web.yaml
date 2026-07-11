@@ -1,0 +1,79 @@
+# apps/web (apps/web/Dockerfile, nginx serving the Vite build). UNVERIFIED
+# alongside the Dockerfile it deploys — apps/web doesn't exist in this
+# worktree yet (see apps/web/Dockerfile header).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  namespace: payna
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+        - name: web
+          image: payna/web:latest # build+push apps/web/Dockerfile under this tag
+          ports:
+            - containerPort: 80
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 15
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 250m
+              memory: 128Mi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+  namespace: payna
+spec:
+  selector:
+    app: web
+  ports:
+    - port: 80
+      targetPort: 80
+---
+# Minimal nginx-ingress-class Ingress. Swap the host and ingressClassName
+# for your cluster's setup; nginx.conf inside the web image already proxies
+# /api to the "server" Service, so this Ingress only needs to route "/" to
+# web — it does not also need to route /api to the server Service.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: payna
+  namespace: payna
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: 20m # matches the 20MB extraction upload limit (apps/server/src/routes/extractions.ts)
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: payna.local
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: web
+                port:
+                  number: 80

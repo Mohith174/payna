@@ -1,0 +1,91 @@
+# Postgres for audit_log + extraction_attempts (docs/SPEC.md §3).
+#
+# The Secret below ships with placeholder values so this is safe to commit.
+# Before applying to a real cluster, replace them (kubectl create secret
+# generic postgres-credentials --namespace payna --from-literal=... --dry-run=client
+# -o yaml, or a secret manager / External Secrets Operator) — never commit
+# real credentials here.
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-credentials
+  namespace: payna
+type: Opaque
+stringData:
+  POSTGRES_USER: payna
+  POSTGRES_PASSWORD: CHANGE_ME
+  POSTGRES_DB: payna
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-data
+  namespace: payna
+spec:
+  accessModes: ["ReadWriteOnce"]
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres
+  namespace: payna
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate # single ReadWriteOnce volume — avoid two pods mounting it
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - secretRef:
+                name: postgres-credentials
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql/data
+              subPath: pgdata # avoid postgres complaining about a non-empty mount root
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-U", "payna", "-d", "payna"]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+          livenessProbe:
+            exec:
+              command: ["pg_isready", "-U", "payna", "-d", "payna"]
+            initialDelaySeconds: 15
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 100m
+              memory: 256Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: postgres-data
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres
+  namespace: payna
+spec:
+  selector:
+    app: postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
