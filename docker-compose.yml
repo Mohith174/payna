@@ -65,10 +65,6 @@ services:
       timeout: 5s
       retries: 10
 
-  # UNVERIFIED: apps/web does not exist in this checkout yet (built by a
-  # parallel executor). This service and apps/web/Dockerfile are written to
-  # spec ahead of that landing; `docker compose build web` will fail until
-  # apps/web/package.json + src/ are present.
   web:
     build:
       context: .

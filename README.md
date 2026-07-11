@@ -42,12 +42,6 @@ payna/
 TypeScript strict everywhere; server dev via `tsx watch`; tests via `vitest`; Node >= 20;
 Express 4, neo4j-driver 5, pg 8, zod 3. No ORM — raw Cypher and SQL by design.
 
-> **apps/web note:** this README, `docker-compose.yml`'s `web` service, and `k8s/40-web.yaml`
-> describe `apps/web` as specified in `docs/SPEC.md` §6, but `apps/web/Dockerfile` and
-> `apps/web/nginx.conf` were authored ahead of the dashboard code landing (built in a separate
-> workstream). They are unverified — `docker build -f apps/web/Dockerfile .` cannot succeed until
-> `apps/web/package.json` and `apps/web/src/` exist.
-
 ### Graph schema (Neo4j)
 
 Every node has `id` (uuid or natural key) and `createdAt`.
@@ -256,6 +250,3 @@ before applying to a real cluster, e.g. via `kubectl create secret generic ... -
 yaml` piped into your GitOps flow, or an External Secrets Operator. `LLM_API_KEY` ships empty;
 `MOCK_EXTRACTION` defaults to `"false"` in the server ConfigMap (unlike Compose) since a real
 cluster deploy is assumed to have a real key.
-
-`apps/web`'s image (`payna/web:latest`) is unverified for the same reason noted above — build and
-push it once `apps/web` exists.

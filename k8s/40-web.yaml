@@ -1,6 +1,4 @@
-# apps/web (apps/web/Dockerfile, nginx serving the Vite build). UNVERIFIED
-# alongside the Dockerfile it deploys — apps/web doesn't exist in this
-# worktree yet (see apps/web/Dockerfile header).
+# apps/web (apps/web/Dockerfile, nginx serving the Vite build).
 apiVersion: apps/v1
 kind: Deployment
 metadata:

@@ -1,13 +1,9 @@
 # apps/web/Dockerfile
 #
-# UNVERIFIED: written to match apps/server/Dockerfile's convention and
-# docs/SPEC.md §6/§7 (Vite + React 18 + TS, built by another executor in a
-# parallel worktree that does not exist in this checkout yet). This image
-# has not been built or run — do so once apps/web/{package.json,src,...}
-# land, and adjust the `npm run build` output dir below if Vite is
-# configured with a non-default `build.outDir`.
+# Multi-stage build for the Vite + React dashboard, served by nginx (which
+# also proxies /api to the server service — see nginx.conf).
 #
-# Build with (from repo root, once apps/web exists):
+# Build with (from repo root):
 #
 #   docker build -f apps/web/Dockerfile -t payna-web .
 
@@ -20,6 +16,9 @@ WORKDIR /app
 COPY . .
 
 RUN npm ci
+# @payna/shared's package.json points main/types at dist/, so it must be
+# compiled before the web app's tsc pass can resolve the import.
+RUN npm run build --workspace packages/shared
 RUN npm run build --workspace apps/web
 
 # ---------- runtime ----------
