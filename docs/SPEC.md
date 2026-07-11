@@ -116,15 +116,18 @@ intervalMonths (nullable), dueMonthDay (nullable, regex `^\d{2}-\d{2}$`), formNu
 dependsOnNames (string[]), confidence (0–1).
 
 Flow: `POST /extractions` (multipart PDF or `{text}` JSON) → extract text (pdf-parse) →
-Claude call (`@anthropic-ai/sdk`, model `claude-sonnet-5`, tool-use forced to a
-`record_requirements` tool whose input schema mirrors the zod schema array) → zod-validate each
-record → insert `extraction_attempts` row (status per outcome, raw + validated payloads) →
-upsert valid records into Neo4j (MERGE by name+state, wire REQUIRES/IN_STATE/RENEWS_EVERY/
-DEPENDS_ON) → respond `{attemptId, accepted: n, rejected: [{record, issues}]}`.
+LLM call via the `openai` npm client against an **OpenAI-compatible endpoint** configured by env:
+`LLM_BASE_URL` (default `https://integrate.api.nvidia.com/v1`), `LLM_API_KEY`, `LLM_MODEL`
+(default `nvidia/nemotron-3-super-120b-a12b`). Prompt demands a strict JSON array matching the
+schema; the response is defensively parsed (ignore any reasoning preamble, extract the first
+JSON array) → zod-validate each record → insert `extraction_attempts` row (status per outcome,
+raw + validated payloads, `model` column records LLM_MODEL) → upsert valid records into Neo4j
+(MERGE by name+state, wire REQUIRES/IN_STATE/RENEWS_EVERY/DEPENDS_ON) → respond
+`{attemptId, accepted: n, rejected: [{record, issues}]}`.
 
 Resilience: retry with exponential backoff + jitter (base 1s, factor 2, max 3 attempts, retry
-only on 429/5xx/network); each retry logs a new `attempt_no`. A record failing zod is
-**rejected, never patched**. If `ANTHROPIC_API_KEY` is unset and `MOCK_EXTRACTION=true`,
+only on 429/5xx/network/unparseable-JSON); each retry logs a new `attempt_no`. A record failing
+zod is **rejected, never patched**. If `LLM_API_KEY` is unset and `MOCK_EXTRACTION=true`,
 a deterministic mock returns two plausible records so the full path is demo-able; without either,
 respond 503 `{error:{code:"extraction_unconfigured"}}`.
 
@@ -149,8 +152,8 @@ Vite dev proxy `/api` → server :4000; web calls `/api/*`.
 - `docker-compose.yml`: `neo4j:5-community` (auth `neo4j/payna-dev-password`, ports 7474/7687),
   `postgres:16` (payna/payna/payna, port 5432), `server` (build apps/server Dockerfile),
   `web` (nginx serving Vite build, proxying /api to server). DB volumes named.
-- `.env.example`: NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD, DATABASE_URL, ANTHROPIC_API_KEY,
-  MOCK_EXTRACTION, PORT.
+- `.env.example`: NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD, DATABASE_URL, LLM_BASE_URL,
+  LLM_API_KEY, LLM_MODEL, MOCK_EXTRACTION, PORT.
 - `k8s/` basic manifests: deployments + services for server/web, statefulsets for dbs — generated
   freely, minimal.
 
