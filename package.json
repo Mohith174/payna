@@ -1,0 +1,17 @@
+{
+  "name": "payna",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "packages/shared",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace apps/server",
+    "dev:web": "npm run dev --workspace apps/web --if-present",
+    "seed": "npm run seed --workspace apps/server",
+    "migrate": "npm run migrate --workspace apps/server",
+    "test": "npm run build --workspace packages/shared && npm test --workspace apps/server",
+    "build": "npm run build --workspace packages/shared && npm run build --workspace apps/server"
+  }
+}
