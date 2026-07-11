@@ -5,6 +5,7 @@ import { closeDriver } from "./db/neo4j.js";
 import { closePool } from "./db/postgres.js";
 import { errorHandler } from "./middleware/error.js";
 import { entitiesRouter } from "./routes/entities.js";
+import { extractionsRouter } from "./routes/extractions.js";
 import { healthRouter } from "./routes/health.js";
 
 const app = express();
@@ -13,6 +14,7 @@ app.use(express.json());
 
 app.use("/api/health", healthRouter);
 app.use("/api/entities", entitiesRouter);
+app.use("/api/extractions", extractionsRouter);
 
 app.use(errorHandler);
 
