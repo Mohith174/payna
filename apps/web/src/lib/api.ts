@@ -1,6 +1,6 @@
 import type { Entity, EntityGraph, FilingObligation } from "@payna/shared";
 
-// Thin fetch wrapper around the server's /api routes (docs/SPEC.md §6, §8).
+// Thin fetch wrapper around the server's /api routes.
 // Dev proxy in vite.config.ts forwards /api -> http://localhost:4000.
 
 export interface ApiErrorBody {

@@ -47,7 +47,7 @@ services:
       LLM_API_KEY: ${LLM_API_KEY:-}
       LLM_MODEL: ${LLM_MODEL:-nvidia/nemotron-3-super-120b-a12b}
       # Default true in compose so the extraction path is demo-able without
-      # an LLM key configured (see docs/SPEC.md §5).
+      # an LLM key configured.
       MOCK_EXTRACTION: ${MOCK_EXTRACTION:-true}
       PORT: 4000
     depends_on:

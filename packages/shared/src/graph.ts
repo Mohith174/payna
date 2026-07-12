@@ -1,4 +1,4 @@
-// DTO for GET /entities/:id/graph (docs/SPEC.md §6) — the entity's local
+// DTO for GET /entities/:id/graph — the entity's local
 // subgraph shaped for react-force-graph-2d. Node/link `id`s are prefixed with
 // their type ("state:CA", "requirement:mt-annual-report", …) so ids stay
 // unique across node types even though the underlying domain ids don't share

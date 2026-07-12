@@ -2,7 +2,7 @@ import type { FilingObligation, ObligationStatus, Requirement } from "@payna/sha
 import { getDriver } from "../db/neo4j.js";
 import { computeDeadline } from "./deadlines.js";
 
-// Single Cypher query (docs/SPEC.md §4): collect, for the entity, every
+// Single Cypher query: collect, for the entity, every
 // (Entity)-[:HOLDS]->(LicenseType)-[:REQUIRES]->(Requirement) crossed with the
 // entity's OPERATES_IN states. A requirement scoped to a state via IN_STATE only
 // matches that state; a requirement with no IN_STATE edge applies to every state

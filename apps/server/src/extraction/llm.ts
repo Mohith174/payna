@@ -51,7 +51,7 @@ export async function callLlm(documentText: string): Promise<string> {
   return completion.choices[0]?.message?.content ?? "";
 }
 
-/** Retry only on 429 / 5xx / network errors (docs/SPEC.md §5); 4xx auth/validation errors are permanent. */
+/** Retry only on 429 / 5xx / network errors; 4xx auth/validation errors are permanent. */
 export function isRetryableLlmError(err: unknown): boolean {
   if (err instanceof OpenAI.APIConnectionError || err instanceof OpenAI.APIConnectionTimeoutError) return true;
   if (err instanceof OpenAI.APIError) {

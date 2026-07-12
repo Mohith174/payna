@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-// Structured output schema for the LLM extraction pipeline (docs/SPEC.md §5).
+// Structured output schema for the LLM extraction pipeline.
 // Types/schema only here — the extraction runtime is Phase 2.
 export const ExtractedRequirementSchema = z.object({
   name: z.string().min(1),

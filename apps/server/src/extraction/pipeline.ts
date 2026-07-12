@@ -87,7 +87,7 @@ function validateRecords(rawRecords: unknown[]): { accepted: ExtractedRequiremen
     if (result.success) {
       accepted.push(result.data);
     } else {
-      // A record failing zod is rejected, never patched (docs/SPEC.md §5).
+      // A record failing zod is rejected, never patched.
       rejected.push({ record, issues: result.error.issues.map((i) => `${i.path.join(".")}: ${i.message}`) });
     }
   }
@@ -95,7 +95,7 @@ function validateRecords(rawRecords: unknown[]): { accepted: ExtractedRequiremen
 }
 
 /**
- * Full extraction flow (docs/SPEC.md §5): LLM (or mock) -> defensive parse ->
+ * Full extraction flow: LLM (or mock) -> defensive parse ->
  * per-record zod validation -> extraction_attempts row per outcome -> graph
  * upsert of accepted records. Retries (429/5xx/network/unparseable) each log a
  * new attempt row with an incremented attempt_no.

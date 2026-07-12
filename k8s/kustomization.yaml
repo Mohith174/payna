@@ -1,8 +1,0 @@
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-  - 00-namespace.yaml
-  - 10-postgres.yaml
-  - 20-neo4j.yaml
-  - 30-server.yaml
-  - 40-web.yaml

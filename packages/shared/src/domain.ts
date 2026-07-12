@@ -1,4 +1,4 @@
-// Domain types mirroring the Neo4j graph schema (see docs/SPEC.md §2).
+// Domain types mirroring the Neo4j graph schema.
 // All graph nodes carry `id` (uuid or natural key) and `createdAt` (ISO date string).
 
 export interface GraphNode {

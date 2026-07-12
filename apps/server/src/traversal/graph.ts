@@ -1,7 +1,7 @@
 import type { Entity, EntityGraph, GraphVizLink, GraphVizNode, LicenseType, Requirement, State } from "@payna/shared";
 import { getDriver } from "../db/neo4j.js";
 
-// Builds the entity's local subgraph for visualization (docs/SPEC.md §6):
+// Builds the entity's local subgraph for visualization:
 // the entity, the states it operates in, the license types it holds, and the
 // requirements those licenses require — scoped to the entity's operating
 // states with the same IN_STATE-or-unscoped rule the traversal engine uses

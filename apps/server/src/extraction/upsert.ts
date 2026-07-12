@@ -21,7 +21,7 @@ function cadenceLabel(intervalMonths: number): string {
 }
 
 /**
- * Upsert validated extraction records into the graph (docs/SPEC.md §5).
+ * Upsert validated extraction records into the graph.
  * Requirement identity is (name, state): the MERGE pattern includes the
  * IN_STATE edge, so the same requirement name in another state is a distinct
  * node. DEPENDS_ON is wired in a second pass so intra-batch forward references

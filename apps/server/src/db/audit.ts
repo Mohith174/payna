@@ -8,7 +8,7 @@ export interface AuditEntry {
   detail?: unknown;
 }
 
-// Every Neo4j write from the API inserts an audit_log row, best-effort (docs/SPEC.md §3):
+// Every Neo4j write from the API inserts an audit_log row, best-effort:
 // a logging failure must never fail the user-facing request.
 export async function writeAuditLog(entry: AuditEntry): Promise<void> {
   try {

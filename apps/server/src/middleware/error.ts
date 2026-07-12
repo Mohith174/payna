@@ -16,7 +16,7 @@ export function notFound(subject: string): ApiError {
   return new ApiError(404, "not_found", `${subject} not found`);
 }
 
-// Central error handler -> {error:{code,message}} (docs/SPEC.md §8).
+// Central error handler -> {error:{code,message}}.
 export function errorHandler(err: unknown, _req: Request, res: Response, _next: NextFunction): void {
   if (err instanceof ApiError) {
     res.status(err.status).json({ error: { code: err.code, message: err.message } });

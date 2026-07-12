@@ -1,4 +1,4 @@
-// Pure date math for the traversal engine (docs/SPEC.md §4). No I/O — unit tested directly.
+// Pure date math for the traversal engine. No I/O — unit tested directly.
 
 export interface DeadlineInputs {
   since: string; // ISO date "YYYY-MM-DD", when the license was first held

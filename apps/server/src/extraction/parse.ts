@@ -1,4 +1,4 @@
-// Defensive parsing of LLM output (docs/SPEC.md §5): reasoning models may emit
+// Defensive parsing of LLM output: reasoning models may emit
 // <think> blocks, prose preamble, or markdown fences around the JSON. We strip
 // reasoning tags, then scan for the first structurally balanced JSON array and
 // parse only that.

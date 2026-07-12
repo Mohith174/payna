@@ -1,6 +1,6 @@
 import type { ExtractedRequirement } from "@payna/shared";
 
-// Deterministic mock (docs/SPEC.md §5): when LLM_API_KEY is unset and
+// Deterministic mock: when LLM_API_KEY is unset and
 // MOCK_EXTRACTION=true, return two plausible records so the full
 // parse -> validate -> upsert -> respond path is demo-able offline.
 export function mockExtraction(): ExtractedRequirement[] {
