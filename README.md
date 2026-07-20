@@ -14,7 +14,7 @@ pipeline, and the traversal/deadline engine end to end.
 
 ```
 payna/
-├── docker-compose.yml         # neo4j, postgres, server, web
+├── docker-compose.yml         # neo4j, postgres, server, engine, web
 ├── api/index.mjs              # Vercel serverless entrypoint (re-exports the Express app)
 ├── vercel.json                # build, rewrites, daily health-check cron
 ├── packages/shared/           # domain types + zod schemas
@@ -30,11 +30,18 @@ payna/
 │       ├── traversal/deadlines.ts     # pure date math, unit tested (vitest)
 │       ├── extraction/                # LLM extraction pipeline (pipeline.ts, llm.ts, parse.ts, upsert.ts, mock.ts)
 │       └── routes/                    # entities.ts, extractions.ts, health.ts
-└── apps/web/                          # Vite + React dashboard
+├── apps/engine/                       # Python multi-agent engine (LangGraph) — see its README
+│   ├── payna_engine/agents/           # extraction / validation / obligation agents + StateGraph
+│   ├── payna_engine/mcp_tools/        # MCP server (agency registry) + client
+│   ├── payna_engine/graph/            # single-query + naive Cypher traversal, upsert, viz
+│   ├── payna_engine/{seed,api}.py     # 500-node seed + FastAPI surface
+│   └── evals/                         # run_eval.py (extraction %) + benchmark.py (latency %)
+└── apps/web/                          # Vite + React dashboard (Entities, Extract, Graph)
 ```
 
-TypeScript strict everywhere; server dev via `tsx watch`; tests via `vitest`; Node >= 20;
-Express 4, neo4j-driver 5, pg 8, zod 3. No ORM — raw Cypher and SQL by design.
+The TypeScript stack is strict everywhere; server dev via `tsx watch`; tests via `vitest`;
+Node >= 20; Express 4, neo4j-driver 5, pg 8, zod 3. No ORM — raw Cypher and SQL by design. The
+Python engine (`apps/engine`) is a separate service that reads the **same** Neo4j and Postgres.
 
 ### Graph schema (Neo4j)
 
@@ -115,6 +122,37 @@ files to swap, just env vars.
 
 Migrations are numbered SQL files (`apps/server/src/db/migrations/`) applied forward-only by a
 small runner that tracks progress in a `schema_migrations` table.
+
+## Multi-agent engine (`apps/engine`)
+
+A Python **LangGraph** engine runs alongside the TS server against the same Neo4j and Postgres. It
+orchestrates three agents over the context graph and is the home of the agentic/LLM work:
+
+```
+document ─▶ [extraction agent] ─▶ [validation agent] ─▶ [obligation agent] ─▶ obligations
+              LLM → raw records     pydantic gate +        Neo4j upsert +
+              (NVIDIA NIM)          MCP enrichment          single-query Cypher traversal
+```
+
+- **MCP tools** — the validation agent enriches each record by calling `lookup_agency` on a
+  standalone MCP server (`payna_engine/mcp_tools/server.py`, `FastMCP` over stdio) via
+  `langchain-mcp-adapters`. That's the external reference-data source (regulator + filing portal).
+- **Audit** — every agent action writes an `audit_log` row (`actor = "agent:<name>"`), so a run is
+  fully traceable in Postgres.
+- **Traversal** — `graph/traversal.py` has a single-query Cypher implementation and a naive N+1
+  one; `evals/benchmark.py` verifies they agree, then times both to report the latency reduction.
+- **The numbers are measured, not asserted** — `evals/run_eval.py` scores extraction over labeled
+  fixtures; `evals/benchmark.py` measures the traversal speedup. See `apps/engine/README.md`.
+
+```bash
+cd apps/engine && uv venv && uv pip install -e ".[dev]"
+uv run python -m payna_engine.seed          # >500 regulatory nodes
+uv run python -m payna_engine.api           # FastAPI on :4100
+uv run python -m evals.run_eval             # extraction success %
+uv run python -m evals.benchmark --rounds 5 # traversal latency %
+```
+
+The web **Graph** tab renders the whole graph straight from this engine (`/api/graph`).
 
 ## Running it
 

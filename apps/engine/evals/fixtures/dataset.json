@@ -1,0 +1,105 @@
+{
+  "description": "Labeled regulatory snippets for measuring extraction success. Each doc has a single primary filing requirement with known key fields.",
+  "documents": [
+    {
+      "id": "ca-mt-annual",
+      "text": "Every money transmitter licensed in California must file an Annual Report with the Department of Financial Protection and Innovation no later than March 31 each year, covering the prior calendar year's transaction volume and financial condition.",
+      "expected": {"stateCode": "CA", "category": "Money Services", "intervalMonths": 12, "nameContains": "annual"}
+    },
+    {
+      "id": "ny-mt-quarterly",
+      "text": "Licensed money transmitters operating in New York shall submit a Quarterly Call Report to the Department of Financial Services within 45 days after the close of each calendar quarter.",
+      "expected": {"stateCode": "NY", "category": "Money Services", "intervalMonths": 3, "nameContains": "quarterly"}
+    },
+    {
+      "id": "tx-lending-annual",
+      "text": "Each consumer lending licensee in Texas is required to file an annual report of lending volume and compliance activity with the Office of Consumer Credit Commissioner by January 31.",
+      "expected": {"stateCode": "TX", "category": "Lending", "intervalMonths": 12, "nameContains": "annual"}
+    },
+    {
+      "id": "ca-lending-biennial-bg",
+      "text": "Consumer lenders in California must complete a biennial background re-check of all officers and control persons every two years to maintain licensure.",
+      "expected": {"stateCode": "CA", "category": "Lending", "intervalMonths": 24, "nameContains": "background"}
+    },
+    {
+      "id": "ny-collection-biennial",
+      "text": "A debt collection agency licensed in New York must renew its license biennially by filing a renewal application with the Department of Financial Services before June 30 of the renewal year.",
+      "expected": {"stateCode": "NY", "category": "Collections", "intervalMonths": 24, "nameContains": "renewal"}
+    },
+    {
+      "id": "fl-mt-surety",
+      "text": "Florida money services businesses shall renew the surety bond required for licensure on an annual basis.",
+      "expected": {"stateCode": "FL", "category": "Money Services", "intervalMonths": 12, "nameContains": "surety"}
+    },
+    {
+      "id": "il-mortgage-annual",
+      "text": "Illinois mortgage brokers must submit an annual financial statement to the Department of Financial and Professional Regulation each year by April 30.",
+      "expected": {"stateCode": "IL", "category": "Lending", "intervalMonths": 12, "nameContains": "financial statement"}
+    },
+    {
+      "id": "wa-mt-annual-assessment",
+      "text": "Washington money transmitters are required to pay an annual assessment and file the accompanying report with the Department of Financial Institutions once per year.",
+      "expected": {"stateCode": "WA", "category": "Money Services", "intervalMonths": 12, "nameContains": "annual"}
+    },
+    {
+      "id": "ma-lending-quarterly",
+      "text": "Small-dollar consumer lenders in Massachusetts must file a quarterly transaction volume report with the Division of Banks within thirty days of each quarter's end.",
+      "expected": {"stateCode": "MA", "category": "Lending", "intervalMonths": 3, "nameContains": "transaction volume"}
+    },
+    {
+      "id": "ga-collection-annual",
+      "text": "Georgia debt collectors shall file an annual compliance attestation with the Department of Banking and Finance no later than December 31.",
+      "expected": {"stateCode": "GA", "category": "Collections", "intervalMonths": 12, "nameContains": "compliance"}
+    },
+    {
+      "id": "az-mt-renewal",
+      "text": "Arizona money transmitter licenses must be renewed annually; the renewal application is due to the Department of Insurance and Financial Institutions by December 31.",
+      "expected": {"stateCode": "AZ", "category": "Money Services", "intervalMonths": 12, "nameContains": "renewal"}
+    },
+    {
+      "id": "co-lending-annual",
+      "text": "Colorado supervised lenders are required to submit an annual report and net worth certification to the Uniform Consumer Credit Code administrator each year.",
+      "expected": {"stateCode": "CO", "category": "Lending", "intervalMonths": 12, "nameContains": "net worth"}
+    },
+    {
+      "id": "nv-mt-quarterly",
+      "text": "Nevada licensed money transmitters must file a quarterly financial condition report with the Financial Institutions Division every three months.",
+      "expected": {"stateCode": "NV", "category": "Money Services", "intervalMonths": 3, "nameContains": "financial condition"}
+    },
+    {
+      "id": "or-collection-biennial",
+      "text": "Collection agencies registered in Oregon must renew their registration every two years with the Department of Consumer and Business Services.",
+      "expected": {"stateCode": "OR", "category": "Collections", "intervalMonths": 24, "nameContains": "renewal"}
+    },
+    {
+      "id": "va-lending-annual",
+      "text": "Virginia consumer finance licensees shall file an annual report with the Bureau of Financial Institutions by March 1 of each year.",
+      "expected": {"stateCode": "VA", "category": "Lending", "intervalMonths": 12, "nameContains": "annual"}
+    },
+    {
+      "id": "nj-mt-annual",
+      "text": "New Jersey money transmitters are required to submit an annual audited financial statement to the Department of Banking and Insurance once each year.",
+      "expected": {"stateCode": "NJ", "category": "Money Services", "intervalMonths": 12, "nameContains": "financial statement"}
+    },
+    {
+      "id": "pa-collection-annual",
+      "text": "Pennsylvania collection agencies must file an annual consumer complaint summary with the Department of Banking and Securities by January 31.",
+      "expected": {"stateCode": "PA", "category": "Collections", "intervalMonths": 12, "nameContains": "complaint"}
+    },
+    {
+      "id": "oh-lending-semiannual",
+      "text": "Ohio short-term lenders are required to file a semiannual report of loan originations with the Division of Financial Institutions twice per year, every six months.",
+      "expected": {"stateCode": "OH", "category": "Lending", "intervalMonths": 6, "nameContains": "report"}
+    },
+    {
+      "id": "mi-mt-annual",
+      "text": "Michigan money transmitters must submit an annual report and renewal fee to the Department of Insurance and Financial Services no later than December 1 each year.",
+      "expected": {"stateCode": "MI", "category": "Money Services", "intervalMonths": 12, "nameContains": "annual"}
+    },
+    {
+      "id": "nc-collection-annual",
+      "text": "North Carolina permit holders engaged in collection activity shall renew their permit annually with the Department of Insurance.",
+      "expected": {"stateCode": "NC", "category": "Collections", "intervalMonths": 12, "nameContains": "renew"}
+    }
+  ]
+}
