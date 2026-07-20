@@ -2,6 +2,7 @@ import { NavLink, Route, Routes } from "react-router-dom";
 import { EntityDetailPage } from "./pages/EntityDetail";
 import { EntityListPage } from "./pages/EntityList";
 import { ExtractPage } from "./pages/Extract";
+import { GraphExplorerPage } from "./pages/GraphExplorer";
 
 const navLinkClass = ({ isActive }: { isActive: boolean }) =>
   `rounded-md px-3 py-1.5 text-sm font-medium ${isActive ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-100"}`;
@@ -19,6 +20,9 @@ export function App() {
             <NavLink to="/extract" className={navLinkClass}>
               Extract
             </NavLink>
+            <NavLink to="/graph" className={navLinkClass}>
+              Graph
+            </NavLink>
           </nav>
         </div>
       </header>
@@ -26,6 +30,7 @@ export function App() {
         <Route path="/" element={<EntityListPage />} />
         <Route path="/entities/:id" element={<EntityDetailPage />} />
         <Route path="/extract" element={<ExtractPage />} />
+        <Route path="/graph" element={<GraphExplorerPage />} />
       </Routes>
     </div>
   );

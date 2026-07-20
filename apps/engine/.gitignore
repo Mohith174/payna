@@ -1,0 +1,11 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+uv.lock
+
+# eval/benchmark run artifacts (regenerated locally)
+evals/last_run.json
+evals/benchmark_last_run.json
