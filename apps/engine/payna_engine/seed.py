@@ -11,7 +11,8 @@ Run:  python -m payna_engine.seed --requirements 430 --entities 40
 from __future__ import annotations
 
 import argparse
-from datetime import datetime, timezone
+import calendar
+from datetime import date, datetime, timezone
 
 from payna_engine.db.neo4j_db import close_driver, get_driver
 
@@ -53,9 +54,24 @@ def _now() -> str:
     return datetime.now(timezone.utc).isoformat()
 
 
+def _months_before(today: date, months: int) -> str:
+    """A date `months` before `today`, as YYYY-MM-DD.
+
+    Filing dates are seeded relative to seed time rather than hardcoded, so the demo keeps
+    showing a realistic spread of overdue and upcoming obligations however long after the
+    seed it is viewed.
+    """
+    total = today.year * 12 + (today.month - 1) - months
+    year, month = divmod(total, 12)
+    # Clamp the day so month-end dates stay valid in shorter months (e.g. 31 Mar -> 28 Feb).
+    day = min(today.day, calendar.monthrange(year, month + 1)[1])
+    return date(year, month + 1, day).isoformat()
+
+
 def seed_scaled(requirements: int = 430, entities: int = 40) -> dict:
     driver = get_driver()
     now = _now()
+    today = datetime.now(timezone.utc).date()
 
     # Build requirement rows deterministically across license types and states.
     req_rows = []
@@ -97,8 +113,19 @@ def seed_scaled(requirements: int = 430, entities: int = 40) -> dict:
                 "kind": kinds[n % 4],
                 "operatesIn": sorted({st_a[0], st_b[0]}),
                 "holds": [
-                    {"licenseTypeId": lt_a[0], "since": "2022-01-10", "lastFiledAt": "2024-06-01"},
-                    {"licenseTypeId": lt_b[0], "since": "2023-03-15", "lastFiledAt": None},
+                    {
+                        "licenseTypeId": lt_a[0],
+                        "since": _months_before(today, 48),
+                        # Staggered 0-23 months back rather than a fixed date, so obligations
+                        # land across overdue/upcoming instead of every one going stale the
+                        # moment the hardcoded date fell behind the calendar.
+                        "lastFiledAt": _months_before(today, n % 24),
+                    },
+                    {
+                        "licenseTypeId": lt_b[0],
+                        "since": _months_before(today, 30),
+                        "lastFiledAt": None,  # never filed
+                    },
                 ],
             }
         )
@@ -198,7 +225,8 @@ def seed_scaled(requirements: int = 430, entities: int = 40) -> dict:
                 """UNWIND $rows AS row
                    MATCH (e:Entity {id: row.entityId}), (lt:LicenseType {id: row.licenseTypeId})
                    MERGE (e)-[rel:HOLDS]->(lt)
-                   ON CREATE SET rel.since = row.since, rel.lastFiledAt = row.lastFiledAt""",
+                   ON CREATE SET rel.since = row.since, rel.lastFiledAt = row.lastFiledAt
+                   ON MATCH SET rel.since = row.since, rel.lastFiledAt = row.lastFiledAt""",
                 rows=[
                     {"entityId": e["id"], "licenseTypeId": h["licenseTypeId"], "since": h["since"], "lastFiledAt": h["lastFiledAt"]}
                     for e in entity_rows

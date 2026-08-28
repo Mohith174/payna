@@ -158,13 +158,31 @@ interface EntitySeed {
   holds: { licenseTypeId: string; since: string; lastFiledAt: string | null }[];
 }
 
+/**
+ * A date `months` before today, as YYYY-MM-DD. Filing dates are seeded relative to seed time
+ * rather than hardcoded, so the demo keeps showing a realistic mix of overdue and upcoming
+ * obligations however long after the seed it is viewed — hardcoded dates silently turn every
+ * obligation overdue once the calendar passes them.
+ */
+function monthsAgo(months: number): string {
+  const now = new Date();
+  const d = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth() - months, 1));
+  // Clamp the day so month-end dates stay valid in shorter months (31 Mar -> 28 Feb).
+  const lastDay = new Date(Date.UTC(d.getUTCFullYear(), d.getUTCMonth() + 1, 0)).getUTCDate();
+  d.setUTCDate(Math.min(now.getUTCDate(), lastDay));
+  return d.toISOString().slice(0, 10);
+}
+
 const entities: EntitySeed[] = [
   {
     id: "acme-money-transmitter-llc",
     name: "Acme Money Transmitter LLC",
     kind: "LLC",
     operatesIn: ["CA", "NY"],
-    holds: [{ licenseTypeId: "money-transmitter", since: "2023-01-10", lastFiledAt: "2025-01-15" }],
+    // Filed recently: mostly upcoming obligations, a few overdue.
+    holds: [
+      { licenseTypeId: "money-transmitter", since: monthsAgo(44), lastFiledAt: monthsAgo(2) },
+    ],
   },
   {
     id: "lonestar-lending-corp",
@@ -172,8 +190,9 @@ const entities: EntitySeed[] = [
     kind: "CORP",
     operatesIn: ["TX", "NY"],
     holds: [
-      { licenseTypeId: "consumer-lending", since: "2022-06-01", lastFiledAt: "2024-03-01" },
-      { licenseTypeId: "debt-collection", since: "2022-06-01", lastFiledAt: null }, // never filed
+      // Lapsed on one licence and never filed on the other — the delinquent counterpart to Acme.
+      { licenseTypeId: "consumer-lending", since: monthsAgo(50), lastFiledAt: monthsAgo(18) },
+      { licenseTypeId: "debt-collection", since: monthsAgo(50), lastFiledAt: null },
     ],
   },
 ];
